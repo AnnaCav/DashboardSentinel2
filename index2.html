@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<title>Sentinel-2 Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Font -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+
+<!-- Fontawesome icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<!-- W3 CSS Framework -->
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+
+<!-- Predictlib for predicting the satellite orbits, based on TLE data -->
+<script type="text/javascript" src="libs/predictlib.js"></script>
+
+<!-- Two-Line-Elements as Javascript object -->
+<script type="text/javascript" src="libs/tle.js"></script>
+
+<!-- Day-Night Overlay -->
+<script type="text/javascript" src="libs/terminator.js"></script>
+
+
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
+footer {
+    position:fixed;
+    width:100%;
+    bottom:0px;
+    height:40px;
+}
+.sidenav {
+    height: 100%;
+    width: 0px;
+    position: fixed;
+    z-index: 11;
+    top: 0;
+    left: 0;
+    overflow-x: auto;
+    transition: 0.5s;
+	font-family: "Arial";
+}
+
+
+#closebtn {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf));
+	background:-moz-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-webkit-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-o-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:-ms-linear-gradient(top, #ededed 5%, #dfdfdf 100%);
+	background:linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf',GradientType=0);
+	background-color:#ededed;
+	-moz-border-radius:13px;
+	-webkit-border-radius:13px;
+	border-radius:10px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+    position: absolute;
+    top: 0;
+    right: 0px;
+    text-decoration: none;
+    font-size: 18px;
+	font-weight:bold;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+	margin: 5px;
+	padding-left: 3px;
+	padding-right: 3px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+
+#closebtn:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed));
+	background:-moz-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-webkit-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-o-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:-ms-linear-gradient(top, #dfdfdf 5%, #ededed 100%);
+	background:linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed',GradientType=0);
+	background-color:#dfdfdf;
+}
+</style>
+
+
+<body class="w3-light-grey">
+
+<!-- Top container -->
+<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
+  <span class="w3-bar-item w3-right">Satellite Positions</span>
+</div>
+
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-top:43px;">
+
+  <!-- Header -->
+  <header class="w3-container" style="padding-top:22px; transition: 0.5s;" id="header">
+    <h5><b><i class="fa fa-globe"></i> Sentinel-2 A and Sentinel-2 B</b></h5>
+  </header>
+
+    <!-- Main Map -->
+    <div id="main-map-view" style="width: 100%; height:600px; z-index:-1; transition: 0.5s;"></div>
+
+  <!-- Footer -->
+  <footer class="w3-container w3-black" id="footer" style="transition: 0.5s;">
+    <p style="margin:3px">Footer here</p>
+  </footer>
+
+  <!-- End page content -->
+</div>
+
+<span style="font-size:30px;cursor:pointer;background-color:blue;position:absolute;top:200px;left:10px;z-index:10;" onclick="openNav()"><img src="icons/32.png" alt="Weather" height="20px"></span>
+<!--div style="position:absolute;top:200px;left:10px;z-index:10;">
+	
+</div-->
+
+<div id="mySidenav" class="sidenav" style="z-index:11;">
+    <object type="text/html" data="WetterV8.html"
+            style="min-width:510px; height:1100px;">
+    </object>
+	<button onclick="closeNav()" id="closebtn">&times;</button>
+</div>
+
+<script>
+
+function openNav() {
+    document.getElementById("mySidenav").style.width = "510px";
+	document.getElementById("main-map-view").style.marginLeft = "510px";
+	document.getElementById("header").style.marginLeft = "510px";
+	document.getElementById("footer").style.marginLeft = "510px";
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.width = "0";
+	document.getElementById("main-map-view").style.marginLeft = "0px";
+	document.getElementById("header").style.marginLeft = "0px";
+	document.getElementById("footer").style.marginLeft = "0px";
+}
+</script>
+
+<script>
+	
+    //
+    // Initialise Leaflet container
+    //
+    var satMap = L.map('main-map-view').setView([0, 0], 1);
+
+    //
+    // Set basemap, can be changed
+    //
+    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	    maxZoom: 18,
+	    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+		    'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributor',
+    }).addTo(satMap);
+
+    //
+    // Acquisition Plan
+    //
+    var wmsLayer = L.tileLayer.wms('http://cf000008.geo.sbg.ac.at:8888/geoserver/s2/ows?', {
+	    layers: 's2:s2_acq_plan',
+	    styles: 'Acq_Plan_Default',
+	    transparent: 'true',
+	    format: 'image/png'
+    }).addTo(satMap);
+	
+    //
+    // Day/Night effect
+    //
+    L.terminator().addTo(satMap);
+    
+    //
+    // Satellite position
+    //
+    var satellites = [];
+    
+    //
+    // Initialise satellites with 0/0 position
+    // Anchor is for icon offset
+    //
+    satellites[0] = L.marker([0, 0],{icon: new L.icon({iconUrl: 'icons/s2.png',iconAnchor: [30, 42]})}).addTo(satMap);
+    satellites[1] = L.marker([0, 0],{icon: new L.icon({iconUrl: 'icons/s2.png',iconAnchor: [30, 42]})}).addTo(satMap);
+    
+    //
+    // Initialise and launch predictlib
+    //
+    PLib.InitializeData();
+    
+    //
+    // This function updates the marker position
+    //
+    function makeUpdateMarkerFunction(satellites){
+	    return function(){
+		    for (var i=0; i<satellites.length; i++){
+			    var satInfo = PLib.QuickFind(PLib.sat[i].name);
+			    satellites[i].setLatLng([satInfo.latitude, satInfo.longitude]);
+		    }
+	    }
+    }
+    
+    //
+    // Set interval for updating marker position
+    //
+    setInterval(makeUpdateMarkerFunction(satellites), 1000);
+    
+    //
+    // Satellite Forecast
+    //
+    var colors = ['orange', 'red'];
+    var satellites = ['S2A', 'S2B'];
+    
+    for (var s = 0; s < satellites.length; s++){
+	    
+	    //
+	    // Get the forecast
+	    //
+	    var latlngs = PLib.QuickFindForecast(PLib.sat[s].name);
+	    
+	    //
+	    // Add the first element to a temporary array
+	    //
+	    var t_ll = [latlngs[0]]
+	    
+	    // 
+	    // Iterate through the array
+	    // 
+	    for (var i = 1; i < latlngs.length; i++){
+		    
+		    //
+		    // Longitudes are getting smaller. If it is larger, we have crossed
+		    // the dateline
+		    //
+		    if (latlngs[i][1] > latlngs[i-1][1]){
+			    //
+			    // Then take the temp array and draw it to the map
+			    //
+			    L.polyline(t_ll, {color: colors[s]}).addTo(satMap);
+			    
+			    //
+			    // Instantiate a new array
+			    //
+			    t_ll = [latlngs[i]]
+		    }else{
+			    
+			    //
+			    // If we can proceed, add coordinates to the temp array
+			    //
+			    t_ll.push(latlngs[i]);
+		    }
+	    }
+    }
+    
+</script>
+
+</body>
+</html>

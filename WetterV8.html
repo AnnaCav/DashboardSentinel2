@@ -1,0 +1,803 @@
+<html>
+<head>
+<meta charset="utf-8"/>
+<link rel="stylesheet" type="text/css" href= "Wetter.css">
+</head>
+<body>
+<form action= "WetterV8.php" method="post" id="myForm">
+<label>
+	<input type="text" name="city" id="city" placeholder="Enter a city name" value=""/>
+	<input type="submit" value="Submit" />
+</label>
+</form>
+
+<button onclick="getLocation()" id="geoloc"><img src="Geolocation.png" alt="Get Geolocation" height="17px"></button>
+
+<form action="WetterV8.php" method="post" id="geolocation">
+	<input type="hidden" id="coordlat" name="coordlat" value="" />
+	<input type="hidden" id="coordlon" name="coordlon" value="" />
+</form>
+
+<div id="Place">
+<h1 style="font-size:36px; color:white; text-shadow:0 0 3px black; margin-bottom:10px">
+	<output id="location" ></output>
+</h1>
+<p style="font-size:18px; color:white; text-shadow:0 0 3px black;margin-top:0px">
+	<output id="region"></output>, <output id="country"></output>
+</p>
+<p style="font-size:18px; color:white; text-shadow:0 0 3px black;margin-top:0px">
+<output id="date"></output>
+</p>
+</div>
+<br>
+<script>
+	document.getElementById("date").innerHTML = Date();
+</script>
+
+<div id="Temperature" >
+<p style="font-size:100px; color:white; text-shadow:0 0 5px black; margin-top:0px;"><output id="temp"></output>°</p>
+</div>
+
+<div id="Unit">
+<p style="font-size:24px; color:white; text-shadow:0 0 1px black">C</p>
+</div>
+
+<div id="minmax">
+<p style="font-size:20px; color:white; text-shadow:0 0 1px black;">
+	&uarr;<output id="high0"></output>°C
+<br>
+<br>
+	&darr;<output id="low0"></output>°C
+</p>
+</div>
+
+<div id="Description">
+<p style="font-size:18px; color:white; text-shadow:0 0 1px black;">
+	<output id="text"></output>
+</p>
+</div>
+<div id="icon0">
+</div>
+
+<!--<div id="container1">
+</div>
+<div id="WindPressure">
+<h2 style="font-size:18px; color:white; text-shadow:0 0 1px black;">Wind and Pressure</h2>
+</div>
+<div id="Windmill">
+<img src="windmill.gif" alt="Windmill" width="60px">
+<img src="windmill.gif" alt="Windmill" width="35px">
+</div>
+<div id="Wind">
+<p style="font-size:14px; color:white; text-shadow:0 0 1px black;"> Wind direction:
+	<output id="direction"></output>
+	°
+	<output id="compass"></output>
+	<br> Wind speed:
+	<output id="speed"></output>
+	km/h
+</p>
+</div>
+
+<div id="Pressure">
+<p style="font-size:14px; color:white; text-shadow:0 0 1px black;">
+	Pressure:
+	<output id="pressurevalue"></output>
+	mbar
+</p>
+</div>-->
+<br>
+
+<div id="container2">
+</div>
+<div id="GeneralDescription">
+<h2 style="font-size:18px; color:white; text-shadow:0 0 1px black;">Precipitation</h2>
+</div>
+<div id="raincloud">
+<img src="prec.gif" alt="Cloud" width="90px">
+</div>
+<div id="DailyWeather">
+<p style="font-size:14px; color:white; text-shadow:0 0 1px black;"> 
+	Weather today:
+	<br>
+	<output id="textfor"></output>
+</p>
+</div>
+<div id="DailyWeatherIcon">
+	<output id="iconfor"></output>
+</div>
+<div id="Humidity">
+<p style="font-size:14px; color:white; text-shadow:0 0 1px black;"> 
+	Humidity:
+	<output id="humidityvalue"></output>
+	%
+	<br> Visibility:
+	<output id="visibility"></output>
+	km
+</p>
+<table id="cloudcover" style="font-size:12px; color:white; text-shadow:0 0 1px black;">
+	<tr>
+		<th style="border:1px solid;">
+			Time:
+		</th>
+		<th style="border:1px solid;">
+			<output id="dt0"></output>
+		</th>
+		<th style="border:1px solid;">
+			<output id="dt3"></output>
+		</th>
+		<th style="border:1px solid;">
+			<output id="dt6"></output>
+		</th>
+		<th style="border:1px solid;">
+			<output id="dt9"></output>
+		</th>
+		<th style="border:1px solid;">
+			<output id="dt12"></output>
+		</th>
+		<th style="border:1px solid;">
+			<output id="dt15"></output>
+		</th>
+		<th style="border:1px solid;">
+			<output id="dt18"></output>
+		</th>
+		<th style="border:1px solid;">
+			<output id="dt21"></output>
+		</th>
+	</tr>
+	<tr>
+		<td style="border:1px solid;">
+			Cloud cover:
+		</td>
+		<td style="border:1px solid;">
+			<output id="clouds0"></output>%
+		</td>
+		<td style="border:1px solid;">
+			<output id="clouds3"></output>%
+		</td>
+		<td style="border:1px solid;">
+			<output id="clouds6"></output>%
+		</td>
+		<td style="border:1px solid;">
+			<output id="clouds9"></output>%
+		</td>
+		<td style="border:1px solid;">
+			<output id="clouds12"></output>%
+		</td>
+		<td style="border:1px solid;">
+			<output id="clouds15"></output>%
+		</td>
+		<td style="border:1px solid;">
+			<output id="clouds18"></output>%
+		</td>
+		<td style="border:1px solid;">
+			<output id="clouds21"></output>%
+		</td>		
+	</tr>
+	<tr>
+		<td style="border:1px solid;">
+			Precipitation (mm):
+		</td>
+		<td style="border:1px solid;">
+			<output id="prec0"></output>
+		</td>
+		<td style="border:1px solid;">
+			<output id="prec3"></output>
+		</td>
+		<td style="border:1px solid;">
+			<output id="prec6"></output>
+		</td>
+		<td style="border:1px solid;">
+			<output id="prec9"></output>
+		</td>
+		<td style="border:1px solid;">
+			<output id="prec12"></output>
+		</td>
+		<td style="border:1px solid;">
+			<output id="prec15"></output>
+		</td>
+		<td style="border:1px solid;">
+			<output id="prec18"></output>
+		</td>
+		<td style="border:1px solid;">
+			<output id="prec21"></output>
+		</td>		
+	</tr>
+</table>
+</div>
+
+<div id="container3">
+</div>
+<div id="SunDescription">
+<h2 style="font-size:18px; color:white; text-shadow:0 0 1px black;">Sun</h2>
+</div>
+<div id="Sunpic">
+<img src="sun.gif" alt="Sun" width="100px">
+</div>
+<div id="Sun">
+<p style="font-size:14px; color:white; text-shadow:0 0 1px black;"> Sunrise:
+	<output id="sunrise"></output>
+	<br> Sunset:
+	<output id="sunset"></output>
+</p>
+</div>
+<div id="Sunshine">
+<p style="font-size:14px; color:white; text-shadow:0 0 1px black;"> Sunangle:
+	<output id="sunangle"></output>°
+</p>
+</div>
+<div id="angle">
+<canvas id="myCanvas" width="100" height="100" style="border-bottom:1px solid black;">
+</div>
+
+<div id="container4">
+</div>
+<div id="ForecastDescription">
+<h2 style="font-size:18px; color:white; text-shadow:0 0 1px black;">Forecasts</h2>
+</div>
+<div id="Forecasts">
+<table style="font-size:14px; color:white; text-shadow:0 0 1px black;">
+	<tr>
+		<th>
+		</th>	
+		<th>
+		</th>
+		<th>
+		</th>
+		<th>
+		Description
+		</th>
+		<th>
+		Highest
+		</th>
+		<th>
+		Lowest
+		</th>
+	</tr>
+	
+	<tr>
+		<td>
+		<output id="day1"></output>
+		</td>
+		<td>
+		<output id="date1"></output>
+		</td>
+		<td>
+		<output id="icon1"></output>
+		</td>
+		<td>
+		<output id="description1"></output>
+		</td>
+		<td>
+		<output id="high1"></output>
+		°C
+		</td>
+		<td>
+		<output id="low1"></output>
+		°C
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<output id="day2"></output>
+		</td>
+		<td>
+		<output id="date2"></output>
+		</td>
+		<td>
+		<output id="icon2"></output>
+		</td>
+		<td>
+		<output id="description2"></output>
+		</td>
+		<td>
+		<output id="high2"></output>
+		°C
+		</td>
+		<td>
+		<output id="low2"></output>
+		°C
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<output id="day3"></output>
+		</td>
+		<td>
+		<output id="date3"></output>
+		</td>
+		<td>
+		<output id="icon3"></output>
+		</td>
+		<td>
+		<output id="description3"></output>
+		</td>
+		<td>
+		<output id="high3"></output>
+		°C
+		</td>
+		<td>
+		<output id="low3"></output>
+		°C
+		</td>
+		<td>
+	</tr>
+	<tr>
+		<td>
+		<output id="day4"></output>
+		</td>
+		<td>
+		<output id="date4"></output>
+		</td>
+		<td>
+		<output id="icon4"></output>
+		</td>
+		<td>
+		<output id="description4"></output>
+		</td>
+		<td>
+		<output id="high4"></output>
+		°C
+		</td>
+		<td>
+		<output id="low4"></output>
+		°C
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<output id="day5"></output>
+		</td>
+		<td>
+		<output id="date5"></output>
+		</td>
+		<td>
+		<output id="icon5"></output>
+		</td>
+		<td>
+		<output id="description5"></output>
+		</td>
+		<td>
+		<output id="high5"></output>
+		°C
+		</td>
+		<td>
+		<output id="low5"></output>
+		°C
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<output id="day6"></output>
+		</td>
+		<td>
+		<output id="date6"></output>
+		</td>
+		<td>
+		<output id="icon6"></output>
+		</td>
+		<td>
+		<output id="description6"></output>
+		</td>
+		<td>
+		<output id="high6"></output>
+		°C
+		</td>
+		<td>
+		<output id="low6"></output>
+		°C
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<output id="day7"></output>
+		</td>
+		<td>
+		<output id="date7"></output>
+		</td>
+		<td>
+		<output id="icon7"></output>
+		</td>
+		<td>
+		<output id="description7"></output>
+		</td>
+		<td>
+		<output id="high7"></output>
+		°C
+		</td>
+		<td>
+		<output id="low7"></output>
+		°C
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<output id="day8"></output>
+		</td>
+		<td>
+		<output id="date8"></output>
+		</td>
+		<td>
+		<output id="icon8"></output>
+		</td>
+		<td>
+		<output id="description8"></output>
+		</td>
+		<td>
+		<output id="high8"></output>
+		°C
+		</td>
+		<td>
+		<output id="low8"></output>
+		°C
+		</td>
+	</tr>
+	<tr>
+		<td>
+		<output id="day9"></output>
+		</td>
+		<td>
+		<output id="date9"></output>
+		</td>
+		<td>
+		<output id="icon9"></output>
+		</td>
+		<td>
+		<output id="description9"></output>
+		</td>
+		<td>
+		<output id="high9"></output>
+		°C
+		</td>
+		<td>
+		<output id="low9"></output>
+		°C
+		</td>
+	</tr>
+</table>
+</div>
+
+<script>
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else { 
+        alert("Geolocation is not supported by this browser.");
+    }
+}
+
+
+function showPosition(position) {
+    var latitude = position.coords.latitude; 
+    var longitude  = position.coords.longitude;
+	document.getElementById("coordlat").value = latitude;
+	document.getElementById("coordlon").value = longitude;
+	document.getElementById("geolocation").submit();
+	}
+</script>
+
+<script charset="utf-8">
+var city = document.getElementById("city").value;
+
+var lastBuildDate;
+var latsun;
+
+var callbackFunction = function getWeather(data) {
+	var location = data.query.results.channel.location;
+	lastBuildDate = data.query.results.channel.lastBuildDate;
+	latsun = data.query.results.channel.item.lat;
+	var temp = data.query.results.channel.item.condition.temp;
+	var text = data.query.results.channel.item.condition.text;
+	var icon = data.query.results.channel.item.condition.code;
+    var wind = data.query.results.channel.wind;
+	var dir = data.query.results.channel.wind.direction;
+	var atmosphere = data.query.results.channel.atmosphere;
+	var astronomy = data.query.results.channel.astronomy;
+	var forecast0 = data.query.results.channel.item.forecast[0]
+	var forecast1 = data.query.results.channel.item.forecast[1]
+	var forecast2 = data.query.results.channel.item.forecast[2]
+	var forecast3 = data.query.results.channel.item.forecast[3]
+	var forecast4 = data.query.results.channel.item.forecast[4]
+	var forecast5 = data.query.results.channel.item.forecast[5]
+	var forecast6 = data.query.results.channel.item.forecast[6]
+	var forecast7 = data.query.results.channel.item.forecast[7]
+	var forecast8 = data.query.results.channel.item.forecast[8]
+	var forecast9 = data.query.results.channel.item.forecast[9]
+	
+	/*if (dir <= 10 || dir >= 350){
+		document.getElementById("compass").value = "N";}
+	else if (dir > 10 && dir < 80){
+		document.getElementById("compass").value = "NO";}
+	else if (dir >= 80 && dir <= 100){
+		document.getElementById("compass").value = "O";}
+	else if (dir > 100 && dir < 170){
+		document.getElementById("compass").value = "SO";}
+	else if (dir >= 170 && dir <= 190){
+		document.getElementById("compass").value = "S";}
+	else if (dir > 190 && dir < 215){
+		document.getElementById("compass").value = "SW";}
+	else if (dir >= 215 && dir <= 235){
+		document.getElementById("compass").value = "W";}
+	else {
+		document.getElementById("compass").value = "NW";}*/
+
+	document.getElementById("location").value = location.city;
+	document.getElementById("date").value = lastBuildDate;
+	document.getElementById("country").value = location.country;
+	document.getElementById("region").value = location.region;
+	document.getElementById("temp").value = temp;
+	document.getElementById("text").value = text;
+	document.getElementById("icon0").innerHTML = "<img src='icons/" + icon + ".png' style='height:40px'>";
+	document.getElementById("high0").value = forecast0.high;
+	document.getElementById("low0").value = forecast0.low;
+	/*document.getElementById("direction").value = wind.direction;
+	document.getElementById("speed").value = wind.speed;*/
+	document.getElementById("textfor").value = forecast0.text;
+	document.getElementById("iconfor").innerHTML = "<img src='icons/" + forecast1.code + ".png' style='height:40px'>";
+	/*document.getElementById("pressurevalue").value = atmosphere.pressure;*/
+	document.getElementById("humidityvalue").value = atmosphere.humidity;
+	document.getElementById("visibility").value = atmosphere.visibility;
+	document.getElementById("sunrise").value = astronomy.sunrise;
+	document.getElementById("sunset").value = astronomy.sunset;
+	
+	if (icon == 25 || icon == 32 || icon == 34 || icon == 36){
+		document.body.style.backgroundImage = "url('Background/sun.jpg')";}
+	else if (icon == 19 || icon == 20 || icon == 21 || icon == 22){
+		document.body.style.backgroundImage = "url('Background/dust.jpg')";}
+	else if (icon == 5 ||icon == 6 || icon == 8 || icon == 9 || icon == 10 || icon == 11 || icon == 12 || icon == 35 || icon == 40 ){
+		document.body.style.backgroundImage = "url('Background/rain.jpg')";}
+	else if (icon == 7 || icon == 13 || icon == 14 || icon == 15 || icon == 16 || icon == 17 || icon == 18 || icon == 41 || icon == 42 || icon == 43 || icon == 46){
+		document.body.style.backgroundImage = "url('Background/snow.jpg')";}
+	else if (icon == 3 || icon == 4 || icon == 37 || icon == 38 || icon == 39 || icon == 45 || icon == 47){
+		document.body.style.backgroundImage = "url('Background/thunderstorm.jpg')";}
+	else if (icon == 0 || icon == 1 || icon == 2 || icon == 23 || icon == 24){
+		document.body.style.backgroundImage = "url('Background/wind.jpg')";}
+	else if (icon == 31 || icon == 33){
+		document.body.style.backgroundImage = "url('Background/moon.jpg')";}
+	else {
+		document.body.style.backgroundImage = "url('Background/cloud.jpg')";}
+	
+	document.getElementById("day1").value = forecast1.day
+	document.getElementById("date1").value = forecast1.date;
+	document.getElementById("icon1").innerHTML = "<img src='icons/" + forecast1.code + ".png' style='height:16px'>";
+	document.getElementById("description1").value = forecast1.text;
+	document.getElementById("high1").value = forecast1.high;
+	document.getElementById("low1").value = forecast1.low;
+	
+	document.getElementById("day2").value = forecast2.day;	
+	document.getElementById("date2").value = forecast2.date;
+	document.getElementById("icon2").innerHTML = "<img src='icons/" + forecast2.code + ".png' style='height:16px'>";
+	document.getElementById("description2").value = forecast2.text;
+	document.getElementById("high2").value = forecast2.high;
+	document.getElementById("low2").value = forecast2.low;
+	
+	document.getElementById("day3").value = forecast3.day;	
+	document.getElementById("date3").value = forecast3.date;
+	document.getElementById("icon3").innerHTML = "<img src='icons/" + forecast3.code + ".png' style='height:16px'>";
+	document.getElementById("description3").value = forecast3.text;
+	document.getElementById("high3").value = forecast3.high;
+	document.getElementById("low3").value = forecast3.low;
+	
+	document.getElementById("day4").value = forecast4.day;	
+	document.getElementById("date4").value = forecast4.date;
+	document.getElementById("icon4").innerHTML = "<img src='icons/" + forecast4.code + ".png' style='height:16px'>";
+	document.getElementById("description4").value = forecast4.text;
+	document.getElementById("high4").value = forecast4.high;
+	document.getElementById("low4").value = forecast4.low;
+	
+	document.getElementById("day5").value = forecast5.day;	
+	document.getElementById("date5").value = forecast5.date;
+	document.getElementById("icon5").innerHTML = "<img src='icons/" + forecast5.code + ".png' style='height:16px'>";
+	document.getElementById("description5").value = forecast5.text;
+	document.getElementById("high5").value = forecast5.high;
+	document.getElementById("low5").value = forecast5.low;
+	
+	document.getElementById("day6").value = forecast6.day;	
+	document.getElementById("date6").value = forecast6.date;
+	document.getElementById("icon6").innerHTML = "<img src='icons/" + forecast6.code + ".png' style='height:16px'>";
+	document.getElementById("description6").value = forecast6.text;
+	document.getElementById("high6").value = forecast6.high;
+	document.getElementById("low6").value = forecast6.low;
+	
+	document.getElementById("day7").value = forecast7.day;	
+	document.getElementById("date7").value = forecast7.date;
+	document.getElementById("icon7").innerHTML = "<img src='icons/" + forecast7.code + ".png' style='height:16px'>";
+	document.getElementById("description7").value = forecast7.text;
+	document.getElementById("high7").value = forecast7.high;
+	document.getElementById("low7").value = forecast7.low;
+	
+	document.getElementById("day8").value = forecast8.day;	
+	document.getElementById("date8").value = forecast8.date;
+	document.getElementById("icon8").innerHTML = "<img src='icons/" + forecast8.code + ".png' style='height:16px'>";
+	document.getElementById("description8").value = forecast8.text;
+	document.getElementById("high8").value = forecast8.high;
+	document.getElementById("low8").value = forecast8.low;
+	
+	document.getElementById("day9").value = forecast9.day;	
+	document.getElementById("date9").value = forecast9.date;
+	document.getElementById("icon9").innerHTML = "<img src='icons/" + forecast9.code + ".png' style='height:16px'>";
+	document.getElementById("description9").value = forecast9.text;
+	document.getElementById("high9").value = forecast9.high;
+	document.getElementById("low9").value = forecast9.low;
+  };
+</script>
+
+<script src="https://query.yahooapis.com/v1/public/yql?q=select * from weather.forecast where woeid in (select woeid from geo.places(1) where text='Salzburg')and u='c' &format=json&callback=callbackFunction"></script>
+
+<script charset="utf-8">
+	var openWeather = function getWeather(data) {
+		var now = data.list[0].dt_txt;
+		var nowlast = now.substr(11,5);
+		var nowcloud = data.list[0].clouds.all;
+		var now3 = data.list[1].dt_txt;
+		var nowlast3 = now3.substr(11,5);
+		var nowcloud3 = data.list[1].clouds.all;
+		var now6 = data.list[2].dt_txt;
+		var nowlast6 = now6.substr(11,5);
+		var nowcloud6 = data.list[2].clouds.all;		
+		var now9 = data.list[3].dt_txt;
+		var nowlast9 = now9.substr(11,5);
+		var nowcloud9 = data.list[3].clouds.all;	
+		var now12 = data.list[4].dt_txt;
+		var nowlast12 = now12.substr(11,5);
+		var nowcloud12 = data.list[4].clouds.all;	
+		var now15 = data.list[5].dt_txt;
+		var nowlast15 = now15.substr(11,5);
+		var nowcloud15 = data.list[5].clouds.all;	
+		var now18 = data.list[6].dt_txt;
+		var nowlast18 = now18.substr(11,5);
+		var nowcloud18 = data.list[6].clouds.all;	
+		var now21 = data.list[7].dt_txt;
+		var nowlast21 = now21.substr(11,5);
+		var nowcloud21 = data.list[7].clouds.all;
+
+		var prec = data.list[0].rain;
+		var precold = JSON.stringify(prec);
+		if (precold == null){
+			var precnew = "na";}
+		else {var precnew = precold.substr(6,3);}
+		var prec3 = data.list[1].rain;
+		var precold3 = JSON.stringify(prec3);
+		if (precold3 == null){
+			var precnew3 = "na";}
+		else {var precnew3 = precold3.substr(6,3);}
+		var prec6 = data.list[2].rain;
+		var precold6 = JSON.stringify(prec6);
+		if (precold6 == null){
+			var precnew6 = "na";}
+		else {var precnew6 = precold6.substr(6,3);}
+		var prec9 = data.list[3].rain;
+		var precold9 = JSON.stringify(prec9);
+		if (precold9 == null){
+			var precnew9 = "na";}
+		else {var precnew9 = precold9.substr(6,3);}
+		var prec12 = data.list[4].rain;
+		var precold12 = JSON.stringify(prec12);
+		if (precold12 == null){
+			var precnew12 = "na";}
+		else {var precnew12 = precold12.substr(6,3);}
+		var prec15 = data.list[5].rain;
+		var precold15 = JSON.stringify(prec15);
+		if (precold15 == null){
+			var precnew15 = "na";}
+		else {var precnew15 = precold15.substr(6,3);}
+		var prec18 = data.list[6].rain;
+		var precold18 = JSON.stringify(prec18);
+		if (precold18 == null){
+			var precnew18 = "na";}
+		else {var precnew18 = precold18.substr(6,3);}
+		var prec21 = data.list[7].rain;
+		var precold21 = JSON.stringify(prec21);
+		if (precold21 == null){
+			var precnew21 = "na";}
+		else {var precnew21 = precold21.substr(6,3);}
+		
+		document.getElementById("clouds0").value=nowcloud;
+		document.getElementById("clouds3").value=nowcloud3;
+		document.getElementById("clouds6").value=nowcloud6;
+		document.getElementById("clouds9").value=nowcloud9;
+		document.getElementById("clouds12").value=nowcloud12;
+		document.getElementById("clouds15").value=nowcloud15;
+		document.getElementById("clouds18").value=nowcloud18;
+		document.getElementById("clouds21").value=nowcloud21;
+		
+		document.getElementById("dt0").value=nowlast;
+		document.getElementById("dt3").value=nowlast3;
+		document.getElementById("dt6").value=nowlast6;
+		document.getElementById("dt9").value=nowlast9;
+		document.getElementById("dt12").value=nowlast12;
+		document.getElementById("dt15").value=nowlast15;
+		document.getElementById("dt18").value=nowlast18;
+		document.getElementById("dt21").value=nowlast21;
+		
+		document.getElementById("prec0").value=precnew;
+		document.getElementById("prec3").value=precnew3;
+		document.getElementById("prec6").value=precnew6;
+		document.getElementById("prec9").value=precnew9;
+		document.getElementById("prec12").value=precnew12;
+		document.getElementById("prec15").value=precnew15;
+		document.getElementById("prec18").value=precnew18;
+		document.getElementById("prec21").value=precnew21;
+
+	};
+	var api = "57873a5b79ba8eddcfa47153b6663e69";
+	
+	var link3 = "http://api.openweathermap.org/data/2.5/forecast?q=Salzburg&units=metric&APPID="+api+"&callback=openWeather";
+	document.write('\x3Cscript type="text/javascript" src="' + link3 + '">\x3C/script>');
+</script>
+
+<script>
+	var phi = latsun;
+	var str = lastBuildDate;
+	var dayofweek = str.substring(0,3);
+	var strDay = str.substring(5,7);
+	var strMonth = str.substring(8,11);
+	var strYear = str.substring(12,16);
+	var strHour = Number(str.substring (17,19));
+	var strMinute = str.substring (20,22);
+	var strDaytime = str.substring (23,25);
+	if (strDaytime == "PM") {strHour = strHour + 12;}
+
+	strHour = strHour.toString();
+	var strDate = strMonth + " " + strDay + " " + strYear + " " + strHour + ":" + strMinute;
+
+	var date = new Date(strDate);
+
+	/*Stundenwinkel*/
+	var hour = date.getHours();
+	var minute = date.getMinutes();
+	var minutes = (hour * 60 + minute);
+	var hourangle = (minutes - 720) * 0.25;
+
+	/*Day of the year*/
+	var start = new Date(date.getFullYear(), 0, 0);
+	var last = new Date(date.getFullYear(), 11, 31)
+	var diff = date-start;
+	var oneDay = 1000 * 60 * 60 * 24;
+	var day = Math.floor(diff / oneDay);
+
+	/*Deklination*/
+	var month = date.getMonth()+1;
+	var month = month.toString();
+	var now = month + strDay;
+
+	var diff2 = last-start;
+	var numberofdays = Math.floor(diff2 / oneDay);
+
+	var x
+	if (now < 1221 && now >= 621){ /*Summertime*/
+		x = 23;}
+	else {x= -23;}
+
+	if (phi < 0) {x = x * -1;} /*Earth position*/
+
+	var y = 360 * (284+day)/numberofdays;
+	var psi = ((2*Math.PI)/360)*y;
+	var dekl = x * Math.sin(psi);
+
+	/*Sun Height*/
+	var sinh = Math.cos(((2*Math.PI)/360)*dekl) * Math.cos(((2*Math.PI)/360)*hourangle) * Math.cos(((2*Math.PI)/360)*phi) + Math.sin(((2*Math.PI)/360)*dekl) * Math.sin(((2*Math.PI)/360)*phi);
+	var h =(360 /(2* Math.PI))*Math.asin(sinh);
+
+	if (h < 0) {h = 0;}
+	var num = parseFloat(Math.round(h * 100) / 100).toFixed(2);
+	document.getElementById("sunangle").value = num;
+
+	/*Draw angle*/
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+	ctx.beginPath();
+	var r = 100;
+	var theta = h * -1;
+	ctx.moveTo(100, 100);
+	ctx.lineTo(0, 100);
+	if ( h > 0){
+	ctx.lineTo(0 + r * Math.cos(Math.PI * theta / 180.0),100 + r * Math.sin(Math.PI * theta / 180.0));}
+	ctx.stroke();
+	
+	if (h == 0){
+	document.body.style.backgroundImage = "url('Background/moon.jpg')";}
+</script>
+</body>
+</html>
